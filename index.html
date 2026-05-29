@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wheel Spinner Famgath PPQC 2026</title>
+<style>
+:root {
+  --primary-color: linear-gradient(45deg, #ff0000, #ff7300);
+  --bg-color: linear-gradient(135deg, #0f172a, #111827, #1e293b);
+}
+
+body {
+  margin: 0;
+  background: var(--bg-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: white;
+  overflow-x: hidden;
+}
+
+.wrap {
+  text-align: center;
+  width: 100%;
+  max-width: 1400px;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 2.2rem;
+  margin: 10px 0 20px 0;
+  text-shadow: 0 0 15px rgba(255,255,255,0.2);
+  letter-spacing: 2px;
+}
+
+.main {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.left {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+}
+
+/* Container Wheel agar responsive di HP */
+.wheel-container {
+  position: relative;
+  width: 450px;
+  height: 450px;
+  max-width: 85vw;
+  max-height: 85vw;
+  margin-bottom: 15px;
+}
+
+#wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 8px solid white;
+  transition: transform 5s cubic-bezier(0.1, 0.8, 0.1, 1);
+  box-shadow: 0 0 40px rgba(255, 115, 0, 0.3);
+  background: #222;
+  box-sizing: border-box;
+}
+
+.pointer {
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 40px solid #facc15;
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  filter: drop-shadow(0 0 10px #facc15);
+}
+
+.control-box {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  padding: 12px 35px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 50px;
+  background: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 0 20px rgba(255,0,0,0.4);
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#settingBtn, #fullscreenBtn {
+  font-size: 1rem;
+  padding: 12px 20px;
+  background: #334155;
+  box-shadow: none;
+}
+
+#hasil {
+  margin-top: 15px;
+  font-size: 3rem;
+  font-weight: bold;
+  min-height: 65px;
+  word-break: break-all;
+}
+
+.panel {
+  display: none;
+  width: 320px;
+  max-width: 90vw;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(15px);
+  text-align: left;
+  box-sizing: border-box;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+textarea {
+  width: 100%;
+  height: 80px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 5px;
+  resize: none;
+  font-size: 14px;
+  background: rgba(255,255,255,0.9);
+  color: #111;
+  box-sizing: border-box;
+}
+
+.win {
+  animation: pop 0.6s infinite alternate;
+  color: #00ffae;
+  text-shadow: 0 0 25px #00ffae;
+}
+
+@keyframes pop {
+  from { transform: scale(1); }
+  to { transform: scale(1.15); }
+}
+
+/* KEMBANG API MEGA MERIAH */
+.firework {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: blast 1.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+  pointer-events: none;
+  z-index: 999;
+}
+
+@keyframes blast {
+  0% { transform: translate(0,0) scale(1); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translate(var(--x), var(--y)) scale(0); opacity: 0; }
+}
+
+/* FOOTER BRANDING & LICENCE */
+.footer-branding {
+  margin-top: auto;
+  padding-top: 30px;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.instagram-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ff7300;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.instagram-link:hover {
+  color: #ff0000;
+}
+
+.instagram-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* RESPONSIVE BREAKPOINT UNTUK HP (POTRET) */
+@media (max-width: 768px) {
+  h1 { font-size: 1.6rem; }
+  .main { gap: 20px; flex-direction: column; }
+  #hasil { font-size: 2.2rem; }
+  .footer-branding { padding-top: 20px; font-size: 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="appContainer">
+  <h1>WHEEL SPINNER FAMGATH PPQC 2026</h1>
+
+  <div class="main">
+    <div class="left">
+      <div class="wheel-container">
+        <div class="pointer"></div>
+        <canvas id="wheel" width="500" height="500"></canvas>
+      </div>
+      
+      <div class="control-box">
+        <button id="spinBtn" onclick="spin()">SPIN</button>
+        <button onclick="togglePanel()" id="settingBtn">⚙️ SETTING</button>
+        <button onclick="toggleFullscreen()" id="fullscreenBtn">📺 FULLSCREEN</button>
+      </div>
+      
+      <div id="hasil">?</div>
+    </div>
+
+    <div class="panel" id="panel">
+      <h3 style="margin-top:0;">⚙️ CUSTOM SETTING</h3>
+      <p style="margin:5px 0;"><b>Semua Nama di Wheel</b></p>
+      <textarea id="allItems">A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z</textarea>
+
+      <p style="margin:10px 0 5px 0;"><b>Yang Bisa Menang (Rahasia)</b></p>
+      <textarea id="winnerItems">A,I,U,E,O</textarea>
+
+      <button onclick="applySettings()" style="font-size:14px; padding:8px 20px; margin-top:15px; width:100%; border-radius:10px;">UPDATE WHEEL</button>
+    </div>
+  </div>
+
+  <div class="footer-branding">
+    <div>Powered by : <strong>AIman.Creative</strong></div>
+    <a href="https://instagram.com/aiman.muhammad1" target="_blank" class="instagram-link">
+      <svg class="instagram-icon" viewBox="0 0 24 24">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+      aiman.muhammad1
+    </a>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('wheel');
+const ctx = canvas.getContext('2d');
+
+let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+let rahasia = ['A','I','U','E','O'];
+let tersedia = [...rahasia];
+
+let total = letters.length;
+let arc = (Math.PI*2)/total;
+let currentRotation = 0;
+let isSpinning = false;
+
+function togglePanel(){
+  const panel = document.getElementById('panel');
+  panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+}
+
+function applySettings(){
+  letters = document.getElementById('allItems').value.split(',').map(x=>x.trim()).filter(x=>x);
+  rahasia = document.getElementById('winnerItems').value.split(',').map(x=>x.trim()).filter(x=>x);
+  tersedia = [...rahasia];
+
+  total = letters.length;
+  arc = (Math.PI*2)/total;
+
+  drawWheel();
+  alert('Wheel berhasil diupdate!');
+  document.getElementById('panel').style.display = 'none';
+}
+
+function drawWheel(){
+  ctx.clearRect(0, 0, 500, 500);
+  for(let i=0;i<total;i++){
+    ctx.beginPath();
+    ctx.moveTo(250,250);
+    ctx.arc(250,250,250,i*arc,(i+1)*arc);
+
+    ctx.fillStyle = `hsl(${(i * (360 / total))}, 75%, 50%)`;
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(250,250);
+    ctx.rotate(i*arc + arc/2);
+
+    ctx.fillStyle='white';
+    ctx.textAlign='right';
+    ctx.textBaseline='middle';
+    
+    ctx.font = total > 30 ? 'bold 11px Arial' : total > 15 ? 'bold 14px Arial' : 'bold 18px Arial';
+    ctx.fillText(letters[i], 230, 0);
+
+    ctx.restore();
+  }
+}
+
+drawWheel();
+
+function spin(){
+  if (isSpinning) return;
+
+  const validWinners = tersedia.filter(item => letters.includes(item));
+  if(validWinners.length === 0){
+    tersedia = [...rahasia];
+  }
+
+  const randomIndex = Math.floor(Math.random() * tersedia.length);
+  const hasil = tersedia[randomIndex];
+  tersedia.splice(randomIndex, 1);
+
+  const index = letters.indexOf(hasil);
+  if (index === -1) {
+    alert("Error: Pemenang tidak ada di daftar Wheel utama!");
+    return;
+  }
+
+  isSpinning = true;
+  document.getElementById('spinBtn').disabled = true;
+
+  const hasilDiv = document.getElementById('hasil');
+  hasilDiv.innerText = "Memutar...";
+  hasilDiv.classList.remove('win');
+
+  const perHuruf = 360 / total;
+  const targetDeg = 270 - (index * perHuruf) - (perHuruf / 2);
+  const extraSpins = 360 * 8; 
+  
+  currentRotation += extraSpins + (targetDeg - (currentRotation % 360)) + 360;
+  canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+  setTimeout(()=>{
+    hasilDiv.innerText = hasil;
+    hasilDiv.classList.add('win');
+    
+    // Memicu Kembang Api Besar dari Kiri & Kanan Luar Roda
+    triggerMegaFireworks();
+
+    isSpinning = false;
+    document.getElementById('spinBtn').disabled = false;
+  }, 5000);
+}
+
+// FUNGSI LEDAKAN KEMBANG API MEGA MERIAH DI SEKITAR SISI KIRI & KANAN RODA
+function triggerMegaFireworks(){
+  // Koordinat titik luncur (Kiri layar dan Kanan layar)
+  const launchPoints = [
+    { x: window.innerWidth * 0.15, y: window.innerHeight * 0.4 }, // Kiri luar
+    { x: window.innerWidth * 0.85, y: window.innerHeight * 0.4 }  // Kanan luar
+  ];
+
+  launchPoints.forEach(point => {
+    // Buat 100 partikel per titik ledakan agar sangat ramai
+    for(let i=0; i<100; i++){
+      const firework = document.createElement('div');
+      firework.className = 'firework';
+      
+      // Mengatur posisi awal ledakan
+      firework.style.left = point.x + 'px';
+      firework.style.top = point.y + 'px';
+      
+      // Ukuran bervariasi agar terlihat 3D dan megah (4px sampai 12px)
+      const size = Math.random() * 8 + 4;
+      firework.style.width = size + 'px';
+      firework.style.height = size + 'px';
+      
+      // Warna acak neon berkilau
+      firework.style.background = `hsl(${Math.random()*360}, 100%, 65%)`;
+      firework.style.boxShadow = `0 0 ${size*2}px hsl(${Math.random()*360}, 100%, 65%)`;
+
+      // Jangkauan ledakan diperlebar (hingga sejauh 600px radiusnya)
+      const angle = Math.random() * Math.PI * 2;
+      const distance = Math.random() * 500 + 100; 
+      const x = Math.cos(angle) * distance + 'px';
+      const y = Math.sin(angle) * distance + 'px';
+
+      firework.style.setProperty('--x', x);
+      firework.style.setProperty('--y', y);
+
+      document.body.appendChild(firework);
+
+      // Hapus otomatis setelah animasi selesai (1.8 detik)
+      setTimeout(()=>{ firework.remove(); }, 1800);
+    }
+  });
+}
+
+// FUNGSI UNTUK AKTIFKAN/MATIKAN MODE FULLSCREEN
+function toggleFullscreen() {
+  const elem = document.getElementById('appContainer');
+  const btn = document.getElementById('fullscreenBtn');
+
+  if (!document.fullscreenElement) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+      elem.msRequestFullscreen();
+    }
+    btn.innerText = "❌ EXIT FULLSCREEN";
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+    btn.innerText = "📺 FULLSCREEN";
+  }
+}
+</script>
+
+</body>
+</html>
